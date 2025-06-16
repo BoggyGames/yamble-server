@@ -14,6 +14,7 @@ export class DicerollsController {
 
   @Get()
   findAll() {
+    
     return this.dicerollsService.findAll();
   }
 
