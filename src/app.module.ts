@@ -8,9 +8,10 @@ import { HighscoresModule } from './highscores/highscores.module';
 import { DicerollsModule } from './dicerolls/dicerolls.module';
 import { DatabaseModule } from './database.module';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
-  imports: [AuthModule, ProfilesModule, HighscoresModule, DicerollsModule, ConfigModule.forRoot({
+  imports: [AuthModule, ProfilesModule, HighscoresModule, DicerollsModule, ScheduleModule.forRoot(), ConfigModule.forRoot({
     isGlobal: true, // Makes config available app-wide
   })],
   controllers: [AppController],

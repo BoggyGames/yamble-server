@@ -1,4 +1,19 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateDicerollDto } from './create-diceroll.dto';
+import { IsDateString, IsInt, IsOptional } from 'class-validator';
 
-export class UpdateDicerollDto extends PartialType(CreateDicerollDto) {}
+export class UpdateDiceRollDto {
+  @IsOptional()
+  @IsDateString()
+  rollDate?: string;
+
+  @IsOptional()
+  @IsInt()
+  randomSeed?: number;
+
+  @IsOptional()
+  @IsInt()
+  dailyId?: number;
+
+  @IsOptional()
+  @IsInt()
+  challId?: number;
+}

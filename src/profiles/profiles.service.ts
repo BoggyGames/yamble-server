@@ -1,8 +1,10 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, ConflictException } from '@nestjs/common';
 import { Profile } from 'src/entities/profile.entity';
 import { Repository } from 'typeorm';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import * as bcrypt from 'bcrypt';
+import { DateTime } from 'luxon';
 
 @Injectable()
 export class ProfilesService {
@@ -12,16 +14,50 @@ export class ProfilesService {
     private profRepository: Repository<Profile>,
   ) {}
 
-  create(createProfileDto: CreateProfileDto) {
-    return 'This action adds a new profile';
+  todaysDate() {
+    const zone = 'Europe/Belgrade';
+
+    const dt = DateTime.now().setZone(zone).startOf('day');
+
+    return dt.toJSDate();
+  }
+
+  async createProfile(dto: CreateProfileDto): Promise<Profile> {
+
+    const existing = await this.profRepository.findOneBy({ username: dto.username });
+    if (existing) {
+      throw new ConflictException('Username already exists');
+    }
+
+    const passwordHash = await bcrypt.hash(dto.password, 10);
+
+    const isAdmin = dto.username === "Boggy";
+    const isLambda = dto.username === "Lambda";
+
+    const profile = this.profRepository.create({
+      username: dto.username,
+      passwordHash,
+      wins: (isLambda ? 123456 : 0),
+      badges: ((isAdmin || isLambda) ? "1" : "0") + '0'.repeat(15), // 16-char zero string
+      created: this.todaysDate(), // today
+    });
+
+    return this.profRepository.save(profile);
   }
 
   findAll() {
     return `This action returns all profiles`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} profile`;
+  findOne(user: string) {
+    return this.profRepository.findOneByOrFail({ username: user });
+  }
+
+  async findOneWithoutHash(user: string) {
+    const prof = await this.profRepository.findOneByOrFail({ username: user });
+
+    const { passwordHash, ...safeProfile } = prof;
+    return safeProfile;
   }
 
   update(id: number, updateProfileDto: UpdateProfileDto) {
@@ -31,4 +67,6 @@ export class ProfilesService {
   remove(id: number) {
     return `This action removes a #${id} profile`;
   }
+
+  
 }

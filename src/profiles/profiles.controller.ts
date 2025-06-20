@@ -9,17 +9,17 @@ export class ProfilesController {
 
   @Post()
   create(@Body() createProfileDto: CreateProfileDto) {
-    return this.profilesService.create(createProfileDto);
+    return this.profilesService.createProfile(createProfileDto);
   }
 
-  @Get()
+  /*@Get()
   findAll() {
     return this.profilesService.findAll();
-  }
+  }*/
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.profilesService.findOne(+id);
+  @Get(':user')
+  findOne(@Param('user') user: string) {
+    return this.profilesService.findOneWithoutHash(user);
   }
 
   @Patch(':id')

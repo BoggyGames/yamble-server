@@ -1,31 +1,34 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { DiceRoll } from 'src/entities/dicerolls.entity';
 import { DicerollsService } from './dicerolls.service';
-import { CreateDicerollDto } from './dto/create-diceroll.dto';
-import { UpdateDicerollDto } from './dto/update-diceroll.dto';
 
 @Controller('dicerolls')
 export class DicerollsController {
   constructor(private readonly dicerollsService: DicerollsService) {}
 
   @Post()
-  create(@Body() createDicerollDto: CreateDicerollDto) {
-    return this.dicerollsService.create(createDicerollDto);
+  create() {
+    return this.dicerollsService.create();
   }
+
+  /*@Get()
+  findAll() {
+    return this.dicerollsService.findAll();
+  }*/
 
   @Get()
-  findAll() {
-    
-    return this.dicerollsService.findAll();
+  findToday() {
+    return this.dicerollsService.findToday();
   }
 
-  @Get(':id')
+  /*@Get(':id')
   findOne(@Param('id') id: string) {
     return this.dicerollsService.findOne(+id);
-  }
+  }*/
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDicerollDto: UpdateDicerollDto) {
-    return this.dicerollsService.update(+id, updateDicerollDto);
+  update(@Param('id') id: string) {
+    return this.dicerollsService.update();
   }
 
   @Delete(':id')
