@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { HighscoresService } from './highscores.service';
 import { CreateHighscoreDto } from './dto/create-highscore.dto';
-import { UpdateHighscoreDto } from './dto/update-highscore.dto';
 
 @Controller('highscores')
 export class HighscoresController {
@@ -17,12 +16,12 @@ export class HighscoresController {
     return this.highscoresService.findAll();
   }
 
-  @Get(':id')
+  @Get(':id') //this id's gonna be a date
   findOne(@Param('id') id: string) {
     return this.highscoresService.findOne(+id);
   }
 
-  @Patch(':id')
+  /*@Patch(':id')
   update(@Param('id') id: string, @Body() updateHighscoreDto: UpdateHighscoreDto) {
     return this.highscoresService.update(+id, updateHighscoreDto);
   }
@@ -30,5 +29,5 @@ export class HighscoresController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.highscoresService.remove(+id);
-  }
+  }*/
 }

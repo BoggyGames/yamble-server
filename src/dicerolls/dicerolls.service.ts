@@ -69,14 +69,14 @@ export class DicerollsService {
   -Set score winner
 
   PROFILE:
-  -Create profile (should also give back authy auth)
+  -Create profile (should also give back authy auth) (done, pozovi auth/login kad je uspešno i lagan si, 2 calls nije strašno)
   -Update profile (subtypes: give badge, boost win count from submit, etc)
-  -See profile based on username
+  -See profile based on username (done!)
 
   AUTH:
-  -Recognize jwt
-  -Return profile (or just username idk) based on jwt
-  -Just, like... make it work in general, idk, noćna mora
+  -Recognize jwt (done!)
+  -Return profile (or just username idk) based on jwt (done!)
+  -Just, like... make it work in general, idk, noćna mora (done!)
 
   HIGHSCORES:
   -Check for cheating and then submit score if logged in

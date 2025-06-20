@@ -50,11 +50,13 @@ export class ProfilesService {
   }
 
   findOne(user: string) {
-    return this.profRepository.findOneByOrFail({ username: user });
+    return this.profRepository.findOneBy({ username: user });
   }
 
   async findOneWithoutHash(user: string) {
-    const prof = await this.profRepository.findOneByOrFail({ username: user });
+    const prof = await this.profRepository.findOneBy({ username: user });
+
+    if (!prof) return null;
 
     const { passwordHash, ...safeProfile } = prof;
     return safeProfile;

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateHighscoreDto } from './dto/create-highscore.dto';
-import { UpdateHighscoreDto } from './dto/update-highscore.dto';
 
 @Injectable()
 export class HighscoresService {
@@ -16,11 +15,11 @@ export class HighscoresService {
     return `This action returns a #${id} highscore`;
   }
 
-  update(id: number, updateHighscoreDto: UpdateHighscoreDto) {
+  /*update(id: number, updateHighscoreDto: UpdateHighscoreDto) {
     return `This action updates a #${id} highscore`;
   }
 
   remove(id: number) {
     return `This action removes a #${id} highscore`;
-  }
+  }*/
 }
