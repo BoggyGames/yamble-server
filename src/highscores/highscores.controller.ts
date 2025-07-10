@@ -1,17 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Request, UseGuards } from '@nestjs/common';
 import { HighscoresService } from './highscores.service';
-import { CreateHighscoreDto } from './dto/create-highscore.dto';
+import { DiceState } from '../entities/dicestate.entity';
+import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('highscores')
 export class HighscoresController {
   constructor(private readonly highscoresService: HighscoresService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createHighscoreDto: CreateHighscoreDto) {
-    return this.highscoresService.create(createHighscoreDto);
+  create(@Body() diceState: DiceState, @Request() req) {
+    return this.highscoresService.create(diceState, req.user.userId);
   }
 
-  @Get()
+  @Get() //from today!
   findAll() {
     return this.highscoresService.findAll();
   }

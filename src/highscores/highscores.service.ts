@@ -1,9 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { CreateHighscoreDto } from './dto/create-highscore.dto';
+import { DiceState } from '../entities/dicestate.entity';
 
 @Injectable()
 export class HighscoresService {
-  create(createHighscoreDto: CreateHighscoreDto) {
+
+  returnScore(diceState: DiceState) {
+    //TODO: anticheat!! fiddle with the thing!!
+  }
+
+  create(diceState: DiceState, userId: number) {
     return 'This action adds a new highscore';
   }
 

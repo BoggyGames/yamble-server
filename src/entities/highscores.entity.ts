@@ -15,11 +15,11 @@ import {
     @PrimaryColumn({ type: 'int' })
     mode: number;
   
-    @PrimaryColumn({ type: 'int' })
+    @PrimaryColumn({ type: 'int', name: 'id' })
     profileId: number;
   
     @ManyToOne(() => Profile)
-    @JoinColumn({ name: 'id' })
+    @JoinColumn({ name: 'id', referencedColumnName: 'id' })
     profile: Profile;
   
     @Column({ type: 'int' })

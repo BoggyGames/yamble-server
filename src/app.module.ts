@@ -8,11 +8,12 @@ import { DicerollsModule } from './dicerolls/dicerolls.module';
 import { DatabaseModule } from './database.module';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
+import { YambleModule } from './yamble/yamble.module';
 
 @Module({
   imports: [AuthModule, ProfilesModule, HighscoresModule, DicerollsModule, ScheduleModule.forRoot(), ConfigModule.forRoot({
     isGlobal: true, // Makes config available app-wide
-  })],
+  }), YambleModule],
   controllers: [AppController],
   providers: [AppService],
 })
