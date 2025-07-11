@@ -1,15 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Request } from '@nestjs/common';
 import { YambleService } from './yamble.service';
-import { CreateYambleDto } from './dto/create-yamble.dto';
-import { UpdateYambleDto } from './dto/update-yamble.dto';
+import { DiceState } from '../entities/dicestate.entity';
+import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('yamble')
 export class YambleController {
   constructor(private readonly yambleService: YambleService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createYambleDto: CreateYambleDto) {
-    return this.yambleService.create(createYambleDto);
+  create(@Body() diceState: DiceState, @Request() req) {
+    return this.yambleService.create(diceState, req.user.userId);
   }
 
   @Get()
@@ -22,13 +24,9 @@ export class YambleController {
     return this.yambleService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateYambleDto: UpdateYambleDto) {
-    return this.yambleService.update(+id, updateYambleDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.yambleService.remove(+id);
+  @UseGuards(JwtAuthGuard)
+  @Patch(:id)
+  create(@Param('id') id: string, @Request() req) {
+    return this.yambleService.update(id, req.user.userId);
   }
 }

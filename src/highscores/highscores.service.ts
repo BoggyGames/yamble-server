@@ -1,23 +1,55 @@
-import { Injectable } from '@nestjs/common';
-import { DiceState } from '../entities/dicestate.entity';
+import { Inject, Injectable } from '@nestjs/common';
+import { Highscore } from 'src/entities/highscores.entity';
+import { Repository } from 'typeorm';
+import { DateTime } from 'luxon';
 
 @Injectable()
 export class HighscoresService {
 
-  returnScore(diceState: DiceState) {
-    //TODO: anticheat!! fiddle with the thing!!
+  constructor(
+    @Inject('HIGHSCORE_REPOSITORY')
+    private scoreRepository: Repository<Highscore>,
+  ) {}
+
+  returnScore(minus: number, mode: number) {
+    //luxon it up
+    const zone = 'Europe/Belgrade';
+    const thatDay = DateTime.now()
+      .setZone(zone)
+      .minus({ days: minus })
+      .startOf('day')
+      .toJSDate();
+
+    return this.findTopScores(thatDay, mode);
+
   }
 
-  create(diceState: DiceState, userId: number) {
-    return 'This action adds a new highscore';
+  async create(score: number, now: Date, userId: number, mode: number) {
+    const newHighscore = this.scoreRepository.create({
+      score,
+      submitDate: now,
+      profileId: userId,
+      mode,
+    });
+  
+    return await this.scoreRepository.save(newHighscore);
   }
 
-  findAll() {
-    return `This action returns all highscores`;
+  async findSingle(now: Date, userId: number, mode: number) {
+    return await this.scoreRepository.findOneBy({
+      submitDate: now,
+      profileId: userId,
+      mode: mode,
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} highscore`;
+  findTopScores(date: Date, mode: number) {
+    return this.scoreRepository.find({
+      where: { submitDate: date, mode: mode },
+      order: { score: 'DESC', profile: { id: 'ASC' } },
+      take: 100,
+      relations: ['profile'],
+    });
   }
 
   /*update(id: number, updateHighscoreDto: UpdateHighscoreDto) {

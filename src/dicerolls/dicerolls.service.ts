@@ -1,10 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DiceRoll } from 'src/entities/dicerolls.entity';
 import { Repository } from 'typeorm';
-import { UpdateDiceRollDto } from './dto/update-diceroll.dto';
 import { Logger } from '@nestjs/common';
 import { DateTime } from 'luxon';
-import { Cron } from '@nestjs/schedule';
+import { Profile } from 'src/entities/profile.entity';
 
 @Injectable()
 export class DicerollsService {
@@ -34,6 +33,10 @@ export class DicerollsService {
     return this.diceRepository.findOneBy({ rollDate: dateObj })
   }
 
+  findThisManyAgo(minus: number) {
+    //todo if needed
+  }
+
   /*async findAll(): Promise<DiceRoll[]> {
     this.logger.log("findAll called!");
     return this.diceRepository.find();
@@ -43,20 +46,18 @@ export class DicerollsService {
     return `This action returns a #${id} diceroll`;
   }*/
 
-  update() {
-    return `Hah! Nope.`;
+  async update(when: Date, chall: Profile, daily: Profile) {
+    const diceRoll = await this.diceRepository.findOneBy({ rollDate: when });
+    if (!diceRoll) throw new Error('Roll not found');
+
+    diceRoll.challProfile = chall;
+    diceRoll.dailyProfile = daily;
+
+    await this.diceRepository.save(diceRoll);
   }
 
   remove(id: number) {
     return `Hah! Nope.`;
-  }
-
-  @Cron('0 0 * * *', {
-    timeZone: 'Europe/Belgrade',
-  })
-  handleMidnightTask() {
-    this.logger.log('Midnight! Time to award badges!');
-    // your logic here
   }
 
   //TODO:

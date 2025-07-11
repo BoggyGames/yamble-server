@@ -5,6 +5,7 @@ import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import * as bcrypt from 'bcrypt';
 import { DateTime } from 'luxon';
+import { profanity, CensorType } from '@2toad/profanity';
 
 @Injectable()
 export class ProfilesService {
@@ -29,6 +30,20 @@ export class ProfilesService {
       throw new ConflictException('Username already exists');
     }
 
+    const userregex = /^(?![_ -])(?:(?![_ -]{2})[\w -]){5,16}(?<![_ -])$/;
+    const passregex = /^(?:(?=.*?\p{N})(?=.*?[\p{S}\p{P} ])(?=.*?\p{Lu})(?=.*?\p{Ll}))[^\p{C}]{8,16}$/;
+
+    if (!userregex.test(dto.username)) {
+      throw new ConflictException('Invalid username: must be 5-16 chars, no leading/trailing/duplicate dashes/underscores.');
+    }
+    if (!passregex.test(dto.password)) {
+      throw new ConflictException('Invalid password: must be 8-16 chars, with upper/lowercase, digit, symbol, no control chars.');
+    }
+
+    if (profanity.exists(dto.username)) {
+      throw new ConflictException('...try a different name?');
+    }
+
     const passwordHash = await bcrypt.hash(dto.password, 10);
 
     const isAdmin = dto.username === "Boggy";
@@ -45,12 +60,12 @@ export class ProfilesService {
     return this.profRepository.save(profile);
   }
 
-  findAll() {
-    return `This action returns all profiles`;
+  findOne(user: string) {
+    return this.profRepository.findOne({where: {username: user}, select: ['id', 'username', 'passwordHash', 'badges', 'created', 'wins'] });
   }
 
-  findOne(user: string) {
-    return this.profRepository.findOneBy({ username: user });
+  findOneId(userId: number) {
+    return this.profRepository.findOne({where: { id: userId }, select: ['id', 'username', 'badges', 'created', 'wins'] });
   }
 
   async findOneWithoutHash(user: string) {
@@ -62,13 +77,8 @@ export class ProfilesService {
     return safeProfile;
   }
 
-  update(id: number, updateProfileDto: UpdateProfileDto) {
-    return `This action updates a #${id} profile`;
+  async updatePr(id: number, pr: Profile) {
+    await this.profRepository.update(id, { wins: pr.wins, badges: pr.badges });
   }
-
-  remove(id: number) {
-    return `This action removes a #${id} profile`;
-  }
-
   
 }

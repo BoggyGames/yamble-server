@@ -19,7 +19,7 @@ import {
     profileId: number;
   
     @ManyToOne(() => Profile)
-    @JoinColumn({ name: 'id', referencedColumnName: 'id' })
+    @JoinColumn({ name: 'id' })
     profile: Profile;
   
     @Column({ type: 'int' })
