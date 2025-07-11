@@ -170,7 +170,9 @@ totalsCount(rows: any, type: number, gamemode: number): number {
 
     const rolls = this.generateRolls(seed + ((diceState.gamemode === 0) ? 0 : 1));
 
-    let cheats = (diceState.gamemode === 5) ? 7 : ((diceState.gamemode === 7) ? 0 : 4);
+    const cheatstart = (diceState.gamemode === 5) ? 7 : ((diceState.gamemode === 7) ? 0 : 4);
+
+    let cheats = cheatstart;
 
     //const penaltyAmount = (diceState.gamemode === 6) ? -50 : 0;
 
@@ -188,11 +190,14 @@ totalsCount(rows: any, type: number, gamemode: number): number {
 
     let givenRolls = diceState.rolls;
 
+    let cheatless = true;
+
     let i = 0, j = 0;
 
     for (i = 0; i < 13; i++) {
       for (j = 0; j < 6; j++) {
         if (rolls[i][j] != givenRolls[i][j]) {
+          cheatless = false;
           cheats--;
         }
       }
@@ -220,7 +225,7 @@ totalsCount(rows: any, type: number, gamemode: number): number {
 
     //ok its actual score calculation time now
 
-    return { score: this.totalsCount(rows, 0, diceState.gamemode), cheats: cheatSum };
+    return { score: this.totalsCount(rows, 0, diceState.gamemode), cheatless: cheatless };
 
   }
 
@@ -270,7 +275,7 @@ totalsCount(rows: any, type: number, gamemode: number): number {
 
     this.scoresSvc.create(score.score, now, userId, (diceState.gamemode === 0 ? 0 : 1));
 
-    if (score.cheats === 0 && score.score >= 200) {
+    if (score.cheatless && score.score >= 200) {
       await this.awardToId(userId, 12, "1");
     }
 
@@ -301,6 +306,11 @@ totalsCount(rows: any, type: number, gamemode: number): number {
 
     let pr = await this.profileSvc.findOneId(idAwarded);
     pr!.wins = pr!.wins + 1;
+    let tier = "0";
+    if (pr!.wins >= 5) tier = "1"; 
+    if (pr!.wins >= 25) tier = "2"; 
+    if (pr!.wins >= 100) tier = "3";
+    pr!.badges = this.awardBadgeString(pr!.badges, 15, tier);
     await this.profileSvc.updatePr(idAwarded, pr!);
 
   }
@@ -334,11 +344,17 @@ totalsCount(rows: any, type: number, gamemode: number): number {
     //first, grab the winners
     let dailywin = await this.scoresSvc.findTopScores(yesterdayStart, 0);
     let challwin = await this.scoresSvc.findTopScores(yesterdayStart, 1);
-
-    await this.awardToId(dailywin[0].profileId, 14, "1");
-    await this.awardToId(challwin[0].profileId, 13, "1");
-
-    await this.rollsSvc.update(yesterdayStart, challwin[0].profile, dailywin[0].profile);
+    let guy1 : Profile | null = null;
+    let guy2 : Profile | null = null;
+    if (dailywin.length > 0) {
+      await this.awardToId(dailywin[0].profileId, 14, "1");
+      guy1 = dailywin[0].profile;
+    }
+    if (challwin.length > 0) {
+      await this.awardToId(challwin[0].profileId, 13, "1");
+      guy2 = challwin[0].profile;
+    }
+    await this.rollsSvc.update(yesterdayStart, guy2, guy1);
   }
 
   remove() {

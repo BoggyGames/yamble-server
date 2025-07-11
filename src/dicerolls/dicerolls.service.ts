@@ -46,12 +46,14 @@ export class DicerollsService {
     return `This action returns a #${id} diceroll`;
   }*/
 
-  async update(when: Date, chall: Profile, daily: Profile) {
-    const diceRoll = await this.diceRepository.findOneBy({ rollDate: when });
+  async update(whendate: Date, chall: Profile | null, daily: Profile | null) {
+    const diceRoll = await this.diceRepository.findOneBy({ rollDate: whendate });
     if (!diceRoll) throw new Error('Roll not found');
 
-    diceRoll.challProfile = chall;
-    diceRoll.dailyProfile = daily;
+    if (chall)
+      diceRoll.challProfile = chall;
+    if (daily)
+      diceRoll.dailyProfile = daily;
 
     await this.diceRepository.save(diceRoll);
   }

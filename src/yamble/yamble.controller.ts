@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Request, UseGuards } from '@nestjs/common';
 import { YambleService } from './yamble.service';
 import { DiceState } from '../entities/dicestate.entity';
 import { AuthGuard } from '@nestjs/passport';
@@ -25,8 +25,8 @@ export class YambleController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Patch(:id)
-  create(@Param('id') id: string, @Request() req) {
+  @Patch(':id')
+  update(@Param('id') id: string, @Request() req) {
     return this.yambleService.update(id, req.user.userId);
   }
 }

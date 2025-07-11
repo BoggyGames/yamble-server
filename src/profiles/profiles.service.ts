@@ -30,8 +30,8 @@ export class ProfilesService {
       throw new ConflictException('Username already exists');
     }
 
-    const userregex = /^(?![_ -])(?:(?![_ -]{2})[\w -]){5,16}(?<![_ -])$/;
-    const passregex = /^(?:(?=.*?\p{N})(?=.*?[\p{S}\p{P} ])(?=.*?\p{Lu})(?=.*?\p{Ll}))[^\p{C}]{8,16}$/;
+    const userregex = /^(?![_ -])(?:(?![_ -]{2})[\w -]){5,16}(?<![_ -])$/u;
+    const passregex = /^(?:(?=.*?\p{N})(?=.*?[\p{S}\p{P} ])(?=.*?\p{Lu})(?=.*?\p{Ll}))[^\p{C}]{8,16}$/u;
 
     if (!userregex.test(dto.username)) {
       throw new ConflictException('Invalid username: must be 5-16 chars, no leading/trailing/duplicate dashes/underscores.');

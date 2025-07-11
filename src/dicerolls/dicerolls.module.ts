@@ -8,5 +8,6 @@ import { DatabaseModule } from 'src/database.module';
   imports: [DatabaseModule],
   controllers: [DicerollsController],
   providers: [...diceProviders, DicerollsService],
+  exports: [DicerollsService],
 })
 export class DicerollsModule {}

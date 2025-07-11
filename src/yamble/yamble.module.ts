@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
 import { YambleService } from './yamble.service';
 import { YambleController } from './yamble.controller';
-import { DicerollsService } from 'src/dicerolls/dicerolls.service';
-import { ProfilesService } from 'src/profiles/profiles.service';
-import { HighscoresService } from 'src/highscores/highscores.service';
+import { DicerollsModule } from 'src/dicerolls/dicerolls.module';
+import { HighscoresModule } from 'src/highscores/highscores.module';
+import { ProfilesModule } from 'src/profiles/profiles.module';
 
 @Module({
+  imports: [DicerollsModule, HighscoresModule, ProfilesModule],
   controllers: [YambleController],
-  providers: [YambleService, DicerollsService, ProfilesService, HighscoresService],
+  providers: [YambleService],
 })
 export class YambleModule {}

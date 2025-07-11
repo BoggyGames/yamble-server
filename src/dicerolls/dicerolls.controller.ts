@@ -26,11 +26,6 @@ export class DicerollsController {
     return this.dicerollsService.findOne(+id);
   }*/
 
-  @Patch(':id')
-  update(@Param('id') id: string) {
-    return this.dicerollsService.update();
-  }
-
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.dicerollsService.remove(+id);
